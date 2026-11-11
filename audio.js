@@ -45,6 +45,14 @@ export function playNote(midi, enabled = true) {
   } catch { /* звук недоступен */ }
 }
 
+/** Аккорд: сначала по одной ноте (арпеджио), потом вместе. major — до мажор, minor — ля минор. */
+export function playChord(kind, enabled = true) {
+  if (!enabled) return;
+  const notes = kind === 'minor' ? [69, 72, 76] : [72, 76, 79];
+  notes.forEach((n, i) => setTimeout(() => playNote(n, true), i * 260));
+  setTimeout(() => notes.forEach(n => playNote(n, true)), notes.length * 260 + 250);
+}
+
 function beep(freqs, enabled, type = 'triangle', step = 0.09) {
   if (!enabled) return;
   try {

@@ -1,5 +1,5 @@
 // Офлайн-режим: приложение работает без интернета после первого открытия.
-const CACHE = 'angelmusic-v2';
+const CACHE = 'angelmusic-v3';
 const FILES = [
   './', 'index.html', 'manifest.json', 'style.css',
   'app.js', 'store.js', 'notes.js', 'theory.js', 'audio.js',

@@ -122,8 +122,8 @@ h1.big{font-size:30px;font-weight:900;line-height:1.15}
 .tabs{display:flex;background:var(--card);border-radius:16px;padding:4px;gap:4px}
 .tabs button{flex:1;height:42px;border-radius:12px;font-weight:900;color:var(--sub)}
 .tabs button.active{background:var(--accent);color:#fff}
-.flip{flex:1;min-height:360px;perspective:1200px;cursor:pointer}
-.flip-inner{position:relative;width:100%;height:100%;min-height:360px;transition:transform .5s;transform-style:preserve-3d}
+.flip{flex:1;min-height:430px;perspective:1200px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;min-height:430px;transition:transform .5s;transform-style:preserve-3d}
 .flip.flipped .flip-inner{transform:rotateY(180deg)}
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border-radius:28px;padding:24px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;box-shadow:0 8px 24px rgba(40,40,80,.10)}
 .face.face-back{transform:rotateY(180deg);justify-content:flex-start}
@@ -185,3 +185,31 @@ h3.sec{font-size:18px;font-weight:900;margin-top:4px}
 .num .glyph{font-size:30px}
 .num .timesig{font-size:20px;color:#fff;line-height:.8}
 .ic .glyph svg{width:auto;height:auto}
+
+/* ===== v2: профи-клавиатура, экзамен, картинки ===== */
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.octs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.key{height:62px;border-radius:18px;background:var(--card);font-size:20px;font-weight:900;box-shadow:0 4px 0 rgba(0,0,0,.08);border:3px solid transparent;transition:transform .1s}
+.key:active{transform:translateY(2px)}
+.key.oct{height:50px;font-size:15px}
+.key.sel{border-color:var(--accent);background:var(--soft)}
+.key.right{background:var(--ok);color:#fff;border-color:var(--ok)}
+.key.wrong{background:var(--bad);color:#fff;border-color:var(--bad)}
+.key.dim{opacity:.4}
+.opt.chosen{outline:4px solid var(--ink);outline-offset:2px}
+.opts.two{grid-template-columns:1fr 1fr}
+.listen-big{display:inline-flex;align-items:center;gap:8px;background:var(--soft);color:var(--ink);font-weight:900;padding:12px 18px;border-radius:16px}
+.listen-big svg{width:24px;height:24px}
+.pic{width:100%;display:flex;justify-content:center}
+.pic .guitar{width:100%;max-width:400px;height:auto}
+.pic.sm .guitar{max-width:300px}
+.staffcard.pic{padding:12px}
+.sym .sym-svg{width:78%;height:auto}
+.sym.sm .sym-svg{width:80%}
+.timer{font-variant-numeric:tabular-nums;min-width:62px;justify-content:center}
+.grade{width:110px;height:110px;border-radius:32px;display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:900;color:#fff;box-shadow:inset 0 -6px 0 rgba(0,0,0,.12)}
+.grade.sm{width:52px;height:52px;border-radius:16px;font-size:28px;flex:none!important}
+.grade.g5{background:var(--green)} .grade.g4{background:var(--blue)} .grade.g3{background:var(--yellow)} .grade.g2{background:var(--bad)}
+.symtxt{font-family:Nunito;font-weight:900;font-size:var(--s);line-height:1.1;white-space:nowrap}
+.sym.sm .symtxt{font-size:calc(var(--s) * .7)}
+.num .symtxt{font-size:26px}

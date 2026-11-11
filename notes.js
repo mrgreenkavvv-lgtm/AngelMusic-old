@@ -24,7 +24,11 @@ export const NOTE_LEVELS = [
   { id: 4, title: 'Добавочные линейки внизу', desc: 'До ми малой октавы', positions: range(-7, 1), color: 'pink' },
   { id: 5, title: 'Добавочные линейки вверху', desc: 'До ми третьей октавы', positions: range(8, 14), color: 'violet' },
   { id: 6, title: 'Все ноты гитары', desc: 'От ми малой до ми третьей', positions: range(-7, 14), color: 'yellow' },
+  { id: 7, title: 'Профи 1', desc: 'Все ноты, 7 кнопок: выбери ноту', positions: range(-7, 14), color: 'orange', mode: 'pro1' },
+  { id: 8, title: 'Профи 2', desc: 'Нота и октава: «соль первой октавы»', positions: range(-7, 14), color: 'violet', mode: 'pro2' },
 ];
+export const ALL_POSITIONS = range(-7, 14);
+export const OCTAVES = [{ n: 3, name: 'Малая' }, { n: 4, name: 'Первая' }, { n: 5, name: 'Вторая' }, { n: 6, name: 'Третья' }];
 function range(a, b) { const r = []; for (let i = a; i <= b; i++) r.push(i); return r; }
 
 /** SVG нотного стана с одной нотой. */

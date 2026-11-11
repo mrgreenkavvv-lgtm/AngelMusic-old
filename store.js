@@ -11,11 +11,13 @@ const DEFAULTS = () => ({
   perfect: 0,               // тестов без ошибок
   settings: {
     pin: '1234',
-    noteLevels: { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true },
+    noteLevels: { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true },
     topics: {},             // topicId: false — тема скрыта учителем
     sound: true,
     questions: 10,
+    exam: { open: false, id: '', count: 20, format: 'choice', minutes: 0 },
   },
+  exams: [],                // результаты экзаменов
 });
 
 let state = load();
@@ -30,6 +32,7 @@ function load() {
       notes: { ...d.notes, ...data.notes },
       theory: { ...d.theory, ...data.theory },
       settings: { ...d.settings, ...data.settings,
+        exam: { ...d.settings.exam, ...(data.settings || {}).exam },
         noteLevels: { ...d.settings.noteLevels, ...(data.settings || {}).noteLevels } } };
   } catch { return DEFAULTS(); }
 }
