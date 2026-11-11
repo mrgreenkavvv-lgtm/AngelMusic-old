@@ -1,12 +1,12 @@
 // Офлайн-режим: приложение работает без интернета после первого открытия.
-const CACHE = 'angelmusic-v1';
+const CACHE = 'angelmusic-v2';
 const FILES = [
-  './', 'index.html', 'manifest.json', 'css/style.css',
-  'js/app.js', 'js/store.js', 'js/notes.js', 'js/theory.js', 'js/audio.js',
-  'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',
-  'fonts/nunito-cyrillic-700-normal.woff2', 'fonts/nunito-cyrillic-800-normal.woff2', 'fonts/nunito-cyrillic-900-normal.woff2',
-  'fonts/nunito-latin-700-normal.woff2', 'fonts/nunito-latin-800-normal.woff2', 'fonts/nunito-latin-900-normal.woff2',
-  'fonts/noto-music-music-400-normal.woff2',
+  './', 'index.html', 'manifest.json', 'style.css',
+  'app.js', 'store.js', 'notes.js', 'theory.js', 'audio.js',
+  'icon.svg', 'icon-192.png', 'icon-512.png',
+  'nunito-cyrillic-700-normal.woff2', 'nunito-cyrillic-800-normal.woff2', 'nunito-cyrillic-900-normal.woff2',
+  'nunito-latin-700-normal.woff2', 'nunito-latin-800-normal.woff2', 'nunito-latin-900-normal.woff2',
+  'noto-music-music-400-normal.woff2',
 ];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
