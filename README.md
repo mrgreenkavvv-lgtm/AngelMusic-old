@@ -53,3 +53,4 @@ version.json — номер версии для автообновления (м
 sw.js        — работа без интернета
 *.woff2      — шрифты Nunito и Noto Music (лицензия SIL OFL)
 ```
+
