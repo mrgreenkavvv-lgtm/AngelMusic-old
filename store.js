@@ -4,18 +4,28 @@ const KEY = 'angelmusic.v1';
 const DEFAULTS = () => ({
   name: '',
   points: 0,
-  stars: 0,
+  gems: 0,                  // алмазики
   days: [],                 // даты занятий YYYY-MM-DD
+  time: {},                 // секунды занятий по дням: { 'YYYY-MM-DD': 600 }
+  log: [],                  // попытки: { t, kind, id, title, right, total }
   notes: { best: {}, stats: {} },   // best[levelId] = 0..3 звезды; stats[noteId] = {r, w}
-  theory: { seen: {}, best: {} },   // seen[cardId] = true; best[topicId] = 0..3
+  theory: { seen: {}, best: {}, done: {} },   // done[topicId] — алмазики за все карточки уже выданы
+  games: { best: {} },      // best['fret1'|'bar1'|'ear1'...] = 0..3
   perfect: 0,               // тестов без ошибок
+  perfectBy: {},            // тестов без ошибок по каждому уровню/теме — для медалей
+  streakGems: {},           // за какие серии уже выданы алмазики
+  owned: { 'av-note': true, 'g-classic': true, 'th-sun': true },
+  equip: { avatar: 'av-note', head: '', face: '', neck: '', guitar: 'g-classic', theme: 'th-sun' },
+  prizeLog: [],             // покупки призов: { uid, id, title, price, date, given }
   settings: {
-    pin: '1234',
+    pin: '1122',
+    pinChanged: false,
     noteLevels: { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true },
     topics: {},             // topicId: false — тема скрыта учителем
     sound: true,
     questions: 10,
-    exam: { open: false, id: '', count: 20, format: 'choice', minutes: 0 },
+    exam: { open: false, id: '', count: 20, format: 'choice', minutes: 0, sections: { notes: true } },
+    prizes: [],             // призы от учителя: { id, title, price }
   },
   exams: [],                // результаты экзаменов
 });
@@ -27,13 +37,19 @@ function load() {
     const raw = localStorage.getItem(KEY);
     if (!raw) return DEFAULTS();
     const data = JSON.parse(raw);
-    const d = DEFAULTS();
-    return { ...d, ...data,
+    const d = DEFAULTS(), ds = data.settings || {};
+    const st = { ...d, ...data,
       notes: { ...d.notes, ...data.notes },
       theory: { ...d.theory, ...data.theory },
-      settings: { ...d.settings, ...data.settings,
-        exam: { ...d.settings.exam, ...(data.settings || {}).exam },
-        noteLevels: { ...d.settings.noteLevels, ...(data.settings || {}).noteLevels } } };
+      games: { ...d.games, ...data.games },
+      owned: { ...d.owned, ...data.owned },
+      equip: { ...d.equip, ...data.equip },
+      settings: { ...d.settings, ...ds,
+        exam: { ...d.settings.exam, ...ds.exam, sections: { ...d.settings.exam.sections, ...(ds.exam || {}).sections } },
+        noteLevels: { ...d.settings.noteLevels, ...ds.noteLevels } } };
+    // старый ПИН по умолчанию 1234 → новый 1122 (если учитель его не менял)
+    if (!st.settings.pinChanged && st.settings.pin === '1234') st.settings.pin = '1122';
+    return st;
   } catch { return DEFAULTS(); }
 }
 
@@ -46,7 +62,7 @@ export const get = () => state;
 export function update(fn) { fn(state); save(); }
 
 export function resetProgress() {
-  const keep = { name: state.name, settings: state.settings };
+  const keep = { name: state.name, settings: state.settings };  // прогресс, алмазики и покупки сбрасываются
   state = { ...DEFAULTS(), ...keep };
   save();
 }
@@ -55,12 +71,19 @@ export function resetProgress() {
 export const LEVELS = [
   { at: 0,    name: 'Новичок' },
   { at: 50,   name: 'Слушатель' },
-  { at: 120,  name: 'Юный музыкант' },
-  { at: 200,  name: 'Знаток нот' },
-  { at: 320,  name: 'Гитарист' },
-  { at: 480,  name: 'Солист' },
-  { at: 700,  name: 'Мастер' },
-  { at: 1000, name: 'Маэстро' },
+  { at: 120,  name: 'Ученик' },
+  { at: 200,  name: 'Юный музыкант' },
+  { at: 320,  name: 'Знаток нот' },
+  { at: 480,  name: 'Гитарист' },
+  { at: 700,  name: 'Исполнитель' },
+  { at: 1000, name: 'Солист' },
+  { at: 1350, name: 'Звезда класса' },
+  { at: 1750, name: 'Мастер' },
+  { at: 2200, name: 'Виртуоз' },
+  { at: 2700, name: 'Композитор' },
+  { at: 3300, name: 'Дирижёр' },
+  { at: 4000, name: 'Маэстро' },
+  { at: 5000, name: 'Легенда' },
 ];
 
 export function levelInfo(points = state.points) {
@@ -113,4 +136,22 @@ export function week() {
     const d = new Date(monday); d.setDate(monday.getDate() + i);
     return { label, on: set.has(today(d)), today: today(d) === today(now) };
   });
+}
+
+/* ===== Журнал занятий ===== */
+export function logAttempt(kind, id, title, right, total) {
+  state.log.push({ t: Date.now(), kind, id, title, right, total });
+  if (state.log.length > 600) state.log = state.log.slice(-600);
+  save();
+}
+export function addTime(sec) {
+  const t = today();
+  state.time[t] = (state.time[t] || 0) + sec;
+  save();
+}
+
+/* ===== Медали мастерства: бронза — 1, серебро — 3, золото — 5 прохождений без ошибок ===== */
+export function medal(key) {
+  const n = state.perfectBy[key] || 0;
+  return n >= 5 ? 'gold' : n >= 3 ? 'silver' : n >= 1 ? 'bronze' : '';
 }

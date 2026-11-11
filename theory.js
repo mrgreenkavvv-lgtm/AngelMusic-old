@@ -12,7 +12,7 @@ const WHOLE = m('\u{1D15D}'), HALF = m('\u{1D15E}'), QUARTER = m('\u{1D15F}'),
   CRESC = m('\u{1D192}'), DECRESC = m('\u{1D193}'), REPEAT = m('\u{1D107}');
 
 // Половинная с точкой: точка справа от головки ноты, на её уровне.
-const DOTTED_HALF = `<span class="glyph"><svg viewBox="0 0 64 100" width="0.64em" height="1em" aria-hidden="true">
+export const DOTTED_HALF = `<span class="glyph"><svg viewBox="0 0 64 100" width="0.64em" height="1em" aria-hidden="true">
   <ellipse cx="22" cy="80" rx="13" ry="9" transform="rotate(-20 22 80)" fill="none" stroke="currentColor" stroke-width="4.5"/>
   <line x1="34" y1="77" x2="34" y2="8" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
   <circle cx="50" cy="79" r="5" fill="currentColor"/></svg></span>`;
@@ -34,74 +34,92 @@ const ACC_NOTE = `<svg class="sym-svg" viewBox="0 0 90 70" aria-hidden="true">${
   <ellipse cx="56" cy="40" rx="7.2" ry="5.2" transform="rotate(-20 56 40)" fill="currentColor"/>
   <line x1="62.6" x2="62.6" y1="39" y2="6" stroke="currentColor" stroke-width="1.8"/></svg>`;
 
-/* ===== Гитара с подсвеченной частью ===== */
-const ACC = '#FF7A3D';
+/* ===== Гитара с подсвеченной частью =====
+   Выделение: ярко-красная заливка + мигающая пунктирная рамка, остальная гитара бледнее.
+   Цвет корпуса берётся из переменной --gb (меняется в магазине). */
+const RED = '#E8202A';
 const xFret = (n) => 290 - 228 * (1 - Math.pow(2, -n / 12));
+const dash = (x, y, w, h, r = 6) => `<rect class="blink" x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="none" stroke="${RED}" stroke-width="2.5" stroke-dasharray="6 4"/>`;
+const BODY = 'M172 24C150 14 128 16 116 26C108 33 100 33 92 26C76 12 16 6 14 62C16 116 76 110 92 96C100 89 108 89 116 96C128 106 150 108 172 98Z';
+const HEAD = 'M293 48L322 44L322 78L293 74Z';
+const PEGS = [301, 309, 317];
+const pegs = (c) => PEGS.map(x => `<rect x="${x - 1}" y="38" width="2" height="8" fill="${c}"/><circle cx="${x}" cy="36" r="4.5" fill="${c}"/>
+    <rect x="${x - 1}" y="76" width="2" height="8" fill="${c}"/><circle cx="${x}" cy="86" r="4.5" fill="${c}"/>`).join('');
+const strings = (c, w) => [0, 1, 2, 3, 4, 5].map(i => {
+  const y = 53.5 + i * 3;
+  return `<line x1="56" x2="${300 + i % 3 * 8}" y1="${y}" y2="${i < 3 ? 47 + i : 75 - (5 - i)}" stroke="${c}" stroke-width="${w || 1.6 - i * 0.18}"/>`;
+}).join('');
+const space = (n, c = RED, op = 1) => `<rect x="${xFret(n)}" y="51" width="${xFret(n - 1) - xFret(n)}" height="20" fill="${c}" opacity="${op}"/>`;
+const label = (n) => `<text x="${(xFret(n) + xFret(n - 1)) / 2}" y="44" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="12" fill="${RED}">${n}</text>`;
+
 export function guitar(hl = '') {
-  const is = (k) => hl === k;
   let s = `<svg class="guitar" viewBox="0 0 330 124" aria-hidden="true">`;
-  // корпус
-  s += `<path d="M172 24C150 14 128 16 116 26C108 33 100 33 92 26C76 12 16 6 14 62C16 116 76 110 92 96C100 89 108 89 116 96C128 106 150 108 172 98Z"
-        fill="${is('body') ? ACC : '#F6C48E'}" stroke="#C98A4B" stroke-width="3"/>`;
-  // розетка и отверстие
-  s += `<circle cx="134" cy="61" r="18" fill="none" stroke="${is('rosette') ? ACC : '#9C6B3C'}" stroke-width="${is('rosette') ? 6 : 4}"/>
-        <circle cx="134" cy="61" r="13" fill="#3B2A1E"/>`;
-  // подставка
-  s += `<rect x="48" y="40" width="13" height="42" rx="3" fill="${is('bridge') ? ACC : '#6B4423'}"/>`;
-  // гриф
-  s += `<rect x="168" y="51" width="122" height="20" fill="${is('neck') ? ACC : '#8B5A2B'}"/>`;
-  // подсветка ладов
-  const space = (n, op = .9) => `<rect x="${xFret(n)}" y="51" width="${xFret(n - 1) - xFret(n)}" height="20" fill="${ACC}" opacity="${op}"/>`;
-  if (is('fret')) s += space(5);
-  if (is('semitone')) s += space(3, .55) + space(4, .95);
-  if (is('press3')) s += space(3, .45);
-  // метки 5, 7, 9, 12
+  s += `<path d="${BODY}" style="fill:var(--gb,#F6C48E);stroke:var(--ge,#C98A4B)" stroke-width="3"/>`;
+  s += `<circle cx="134" cy="61" r="18" fill="none" stroke="#9C6B3C" stroke-width="4"/><circle cx="134" cy="61" r="13" fill="#3B2A1E"/>`;
+  s += `<rect x="48" y="40" width="13" height="42" rx="3" fill="#6B4423"/>`;
+  s += `<rect x="168" y="51" width="122" height="20" fill="#8B5A2B"/>`;
   for (const n of [5, 7, 9]) s += `<circle cx="${(xFret(n) + xFret(n - 1)) / 2}" cy="61" r="2.6" fill="#F4EBDC"/>`;
   const x12 = (xFret(12) + xFret(11)) / 2;
   s += `<circle cx="${x12}" cy="56" r="2.4" fill="#F4EBDC"/><circle cx="${x12}" cy="66" r="2.4" fill="#F4EBDC"/>`;
-  // ладовые порожки
-  for (let n = 1; n <= 12; n++) {
-    s += `<line x1="${xFret(n)}" x2="${xFret(n)}" y1="51" y2="71" stroke="${is('frets') ? '#FFE14D' : '#D8D8D8'}" stroke-width="${is('frets') ? 3.2 : 2}"/>`;
-  }
-  // верхний порожек
+  for (let n = 1; n <= 12; n++) s += `<line x1="${xFret(n)}" x2="${xFret(n)}" y1="51" y2="71" stroke="#D8D8D8" stroke-width="2"/>`;
   s += `<rect x="289" y="50" width="4" height="22" fill="#F4EBDC"/>`;
-  // головка и колки
-  const hc = is('head') ? ACC : '#6B4423', pc = is('head') ? ACC : '#B9B9B9';
-  s += `<path d="M293 48L322 44L322 78L293 74Z" fill="${hc}"/>`;
-  for (const x of [301, 309, 317]) s += `<rect x="${x - 1}" y="38" width="2" height="8" fill="${pc}"/><circle cx="${x}" cy="36" r="4.5" fill="${pc}"/>
-    <rect x="${x - 1}" y="76" width="2" height="8" fill="${pc}"/><circle cx="${x}" cy="86" r="4.5" fill="${pc}"/>`;
-  // струны: сверху толстая 6-я, снизу тонкая 1-я
-  for (let i = 0; i < 6; i++) {
-    const y = 53.5 + i * 3;
-    s += `<line x1="56" x2="${300 + i % 3 * 8}" y1="${y}" y2="${i < 3 ? 47 + i : 75 - (5 - i)}" stroke="${is('strings') ? ACC : '#EFE7D8'}" stroke-width="${is('strings') ? 1.8 : 1.6 - i * 0.18}"/>`;
+  s += `<path d="${HEAD}" fill="#6B4423"/>${pegs('#B9B9B9')}`;
+  s += strings('#EFE7D8');
+  if (hl && hl !== 'count') s += `<rect x="0" y="0" width="330" height="124" fill="#fff" opacity=".55"/>`;
+  switch (hl) {
+    case 'body': s += `<path d="${BODY}" fill="${RED}" opacity=".9"/><path class="blink" d="${BODY}" fill="none" stroke="${RED}" stroke-width="2.5" stroke-dasharray="6 4" transform="translate(-4 -4) scale(1.05 1.07)"/>`; break;
+    case 'rosette': s += `<circle cx="134" cy="61" r="18" fill="none" stroke="${RED}" stroke-width="7"/><circle cx="134" cy="61" r="12" fill="#3B2A1E"/><circle class="blink" cx="134" cy="61" r="26" fill="none" stroke="${RED}" stroke-width="2.5" stroke-dasharray="6 4"/>`; break;
+    case 'bridge': s += `<rect x="48" y="40" width="13" height="42" rx="3" fill="${RED}"/>${dash(41, 33, 27, 56)}`; break;
+    case 'neck': s += `<rect x="168" y="51" width="122" height="20" fill="${RED}"/>${dash(162, 45, 134, 32)}`; break;
+    case 'frets': for (let n = 1; n <= 12; n++) s += `<line x1="${xFret(n)}" x2="${xFret(n)}" y1="49" y2="73" stroke="${RED}" stroke-width="3.6"/>`; s += dash(170, 44, 120, 34); break;
+    case 'fret': s += space(5) + dash(xFret(5) - 5, 45, xFret(4) - xFret(5) + 10, 32, 4); break;
+    case 'press3': s += space(3, RED, .35) + label(3) + `<circle cx="${xFret(3) + 5}" cy="58" r="7" fill="${RED}" stroke="#fff" stroke-width="2"/>` + dash(xFret(3) - 5, 45, xFret(2) - xFret(3) + 10, 32, 4); break;
+    case 'semitone': s += space(3, RED, .45) + space(4) + label(3) + label(4) + dash(xFret(4) - 5, 45, xFret(2) - xFret(4) + 10, 32, 4)
+      + `<text x="${xFret(3) + 4}" y="106" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="12" fill="${RED}">← выше на ½ тона</text>`; break;
+    case 'head': s += `<path d="${HEAD}" fill="${RED}"/>${pegs(RED)}${dash(288, 26, 38, 70)}`; break;
+    case 'strings': s += strings(RED, 2) + dash(50, 44, 266, 34); break;
+    case 'count': for (const n of [1, 2, 3, 4, 5]) s += label(n);
+      s += `<text x="300" y="106" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="11" fill="${RED}">от головки ←</text>`; break;
   }
-  // номера ладов
-  if (is('count') || is('semitone') || is('press3')) {
-    const ns = is('count') ? [1, 2, 3, 4, 5] : is('semitone') ? [3, 4] : [3];
-    for (const n of ns) s += `<text x="${(xFret(n) + xFret(n - 1)) / 2}" y="44" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="11" fill="#2B2350">${n}</text>`;
-  }
-  if (is('count')) s += `<text x="300" y="104" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="10" fill="#2B2350">от головки</text>`;
-  if (is('semitone')) s += `<text x="${xFret(3) + 4}" y="104" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="12" fill="#2B2350">← выше на ½ тона</text>`;
-  // палец на 3-м ладу — поближе к порожку
-  if (is('press3')) s += `<circle cx="${xFret(3) + 5}" cy="58" r="6.5" fill="${ACC}" stroke="#fff" stroke-width="2"/>`;
   return s + '</svg>';
 }
+
+/* ===== Гамма на нотном стане (для карточек тональностей) ===== */
+function scaleSVG(fromPos, label) {
+  const gap = 10, top = 22, W = 330, H = 120;
+  const y = (p) => top + (8 - p) * gap / 2;
+  let s = `<svg class="guitar" viewBox="0 0 ${W} ${H}" aria-hidden="true">`;
+  for (let i = 0; i < 5; i++) s += `<line x1="6" x2="${W - 6}" y1="${y(i * 2)}" y2="${y(i * 2)}" stroke="#2B2350" stroke-width="1.4"/>`;
+  s += `<text x="8" y="${y(2) + 8.75}" font-family="Music" font-size="50" fill="#2B2350">\u{1D11E}</text>`;
+  s += `<text x="54" y="${H - 4}" font-family="Nunito" font-weight="800" font-size="10" fill="${RED}">${label}</text>`;
+  for (let i = 0; i < 8; i++) {
+    const p = fromPos + i, x = 78 + i * 31, ny = y(p);
+    for (let l = -2; l >= p; l -= 2) s += `<line x1="${x - 11}" x2="${x + 11}" y1="${y(l)}" y2="${y(l)}" stroke="#2B2350" stroke-width="1.4"/>`;
+    const tonic = i === 0 || i === 7, c = tonic ? RED : '#2B2350';
+    s += `<ellipse cx="${x}" cy="${ny}" rx="6.4" ry="4.6" transform="rotate(-20 ${x} ${ny})" fill="${c}"/>`;
+    s += p < 4 ? `<line x1="${x + 5.8}" x2="${x + 5.8}" y1="${ny}" y2="${ny - 30}" stroke="${c}" stroke-width="1.5"/>`
+      : `<line x1="${x - 5.8}" x2="${x - 5.8}" y1="${ny}" y2="${ny + 30}" stroke="${c}" stroke-width="1.5"/>`;
+  }
+  return s + '</svg>';
+}
+const C_MAJOR = scaleSVG(-2, 'знаков при ключе нет · красные ноты — тоника');
+const A_MINOR = scaleSVG(-4, 'знаков при ключе нет · красные ноты — тоника');
 
 export const TOPICS = [
   {
     id: 'guitar', title: 'Строение гитары', color: 'yellow', icon: txt('🎸', 26),
     cards: [
-      { id: 'g1', pic: guitar('body'), title: 'Корпус', text: 'Большое «тело» гитары. Внутри оно <b>пустое</b> — поэтому звук получается громким и красивым.', fact: 'Корпус — домик для звука' },
-      { id: 'g2', pic: guitar('rosette'), title: 'Дека и розетка', text: '<b>Дека</b> — передняя крышка корпуса. В ней круглое окошко — <b>розетка</b>. Через неё звук выходит наружу.', fact: 'Правая рука играет над розеткой' },
-      { id: 'g3', pic: guitar('bridge'), title: 'Подставка', text: 'Подставка приклеена к деке. К ней внизу <b>привязаны струны</b>.', fact: 'Она передаёт дрожание струн деке' },
-      { id: 'g4', pic: guitar('neck'), title: 'Гриф', text: 'Длинная «шея» гитары. На грифе <b>левой рукой</b> прижимаем струны.', fact: 'Гриф соединяет корпус и головку' },
-      { id: 'g5', pic: guitar('frets'), title: 'Ладовые порожки', text: 'Металлические полоски поперёк грифа — <b>ладовые порожки</b>. Они делят гриф на лады.', fact: 'Порожки как ступеньки лесенки' },
+      { id: 'g1', ask: 'Что выделено?', pic: guitar('body'), title: 'Корпус', text: 'Большое «тело» гитары. Внутри оно <b>пустое</b> — поэтому звук получается громким и красивым.', fact: 'Корпус — домик для звука' },
+      { id: 'g2', ask: 'Что выделено?', pic: guitar('rosette'), title: 'Дека и розетка', text: '<b>Дека</b> — передняя крышка корпуса. В ней круглое окошко — <b>розетка</b>. Через неё звук выходит наружу.', fact: 'Правая рука играет над розеткой' },
+      { id: 'g3', ask: 'Что выделено?', pic: guitar('bridge'), title: 'Подставка', text: 'Подставка приклеена к деке. К ней внизу <b>привязаны струны</b>.', fact: 'Она передаёт дрожание струн деке' },
+      { id: 'g4', ask: 'Что выделено?', pic: guitar('neck'), title: 'Гриф', text: 'Длинная «шея» гитары. На грифе <b>левой рукой</b> прижимаем струны.', fact: 'Гриф соединяет корпус и головку' },
+      { id: 'g5', ask: 'Что выделено?', pic: guitar('frets'), title: 'Ладовые порожки', text: 'Металлические полоски поперёк грифа — <b>ладовые порожки</b>. Они делят гриф на лады.', fact: 'Порожки как ступеньки лесенки' },
       { id: 'g6', pic: guitar('fret'), title: 'Лад', text: '<b>Лад</b> — это промежуток между двумя соседними порожками. Сюда ставим палец.', fact: 'Лад — «квартирка» для пальца' },
       { id: 'g7', pic: guitar('count'), title: 'Как считать лады', text: 'Лады считаем <b>от головки</b> грифа: 1-й, 2-й, 3-й — и дальше к корпусу.', fact: 'Точки на грифе — подсказки: 5, 7, 9 и 12 лад' },
       { id: 'g8', pic: guitar('press3'), title: 'Зажать на 3-м ладу', text: 'Ставим палец в 3-й лад <b>поближе к порожку</b> и крепко прижимаем струну.', fact: 'Не на сам порожек, а рядом с ним' },
       { id: 'g9', pic: guitar('semitone'), title: 'Соседний лад — полтона', text: 'Переставил палец на соседний лад — нота стала <b>выше или ниже на полтона</b>.', fact: 'К корпусу — выше, к головке — ниже' },
-      { id: 'g10', pic: guitar('head'), title: 'Головка и колки', text: 'Головка — конец грифа. На ней <b>колки</b>: поворачиваем их и настраиваем струны.', fact: 'Натянули струну туже — звук стал выше' },
-      { id: 'g11', pic: guitar('strings'), title: 'Струны', text: 'У гитары <b>6 струн</b>. Считаем от самой тонкой — <b>1-я</b> — до самой толстой — <b>6-я</b>.', fact: '1-я и 6-я струны — обе звучат как ми' },
+      { id: 'g10', ask: 'Что выделено?', pic: guitar('head'), title: 'Головка и колки', text: 'Головка — конец грифа. На ней <b>колки</b>: поворачиваем их и настраиваем струны.', fact: 'Натянули струну туже — звук стал выше' },
+      { id: 'g11', ask: 'Что выделено?', pic: guitar('strings'), title: 'Струны', text: 'У гитары <b>6 струн</b>. Считаем от самой тонкой — <b>1-я</b> — до самой толстой — <b>6-я</b>.', fact: '1-я и 6-я струны — обе звучат как ми' },
     ],
     questions: [
       { q: 'Как называется выделенная часть?', pic: guitar('body'), options: ['Корпус', 'Гриф', 'Головка', 'Подставка'] },
@@ -224,8 +242,10 @@ export const TOPICS = [
       { id: 'md1', sym: txt('🎶', 60), title: 'Лад', text: 'Лад — это то, как ноты <b>дружат</b> между собой вокруг одной главной ноты.', fact: 'Самые известные лады — мажор и минор' },
       { id: 'md2', sym: txt('☀️', 60), play: 'major', title: 'Мажор', text: 'Звучит <b>светло и радостно</b>, как солнечный день.', fact: 'Нажми «Послушать» — это мажор' },
       { id: 'md3', sym: txt('🌧️', 60), play: 'minor', title: 'Минор', text: 'Звучит <b>грустно и задумчиво</b>, как дождик за окном.', fact: 'Нажми «Послушать» — это минор' },
-      { id: 'md4', sym: txt('🏠', 60), title: 'Тоника', text: 'Тоника — <b>главная нота</b> лада, его «дом». Песня обычно заканчивается на тонике.', fact: 'В до мажоре тоника — до' },
-      { id: 'md5', sym: txt('🔑', 60), title: 'Тональность', text: 'Тональность = <b>лад + тоника</b>. Например: <b>до мажор</b> или <b>ля минор</b>.', fact: 'Тоника до + мажор = до мажор' },
+      { id: 'md4', sym: txt('🏠', 60), title: 'Тоника', text: 'Тоника — <b>главная, самая устойчивая нота</b> (и аккорд), на которую опирается произведение и в которую оно обычно <b>«возвращается»</b>, чтобы завершиться.', fact: 'В до мажоре тоника — до' },
+      { id: 'md5', sym: txt('🔑', 60), title: 'Тональность', text: 'Тональность = <b>лад + тоника</b>. Например: <b>до мажор</b> или <b>ля минор</b>. Или: это музыкальный <b>«дом»</b>, где все ноты и аккорды подчиняются одному главному звуку — <b>тонике</b>.', fact: 'Тоника до + мажор = до мажор' },
+      { id: 'md7', pic: C_MAJOR, play: 'scaleC', title: 'До мажор', text: 'Тональность <b>без знаков при ключе</b>. Все ноты в ней обычные — без диезов и бемолей. Тоника — <b>до</b>.', fact: 'Послушай гамму до мажор' },
+      { id: 'md8', pic: A_MINOR, play: 'scaleAm', title: 'Ля минор', text: 'Тоже <b>без знаков при ключе</b> — те же ноты, что в до мажоре, но тоника — <b>ля</b>. Поэтому звучит грустнее.', fact: 'Сравни на слух с до мажором' },
       { id: 'md6', sym: KEYSIG, title: 'Знаки подсказывают', text: 'Знаки при ключе подсказывают, в какой <b>тональности</b> написана музыка.', fact: 'В до мажоре и ля миноре знаков при ключе нет' },
     ],
     questions: [
@@ -237,6 +257,8 @@ export const TOPICS = [
       { q: 'Тональность — это…', options: ['Лад и тоника вместе', 'Громкость', 'Размер', 'Длительность'] },
       { q: 'Какая тоника в до мажоре?', options: ['До', 'Ля', 'Соль', 'Ми'] },
       { q: 'Сколько знаков при ключе в до мажоре?', options: ['Ни одного', 'Один', 'Два', 'Три'] },
+      { q: 'Какая тоника в ля миноре?', options: ['Ля', 'До', 'Ми', 'Соль'] },
+      { q: 'Послушай гамму. Это до мажор или ля минор?', play: 'scaleAm', options: ['Ля минор', 'До мажор'] },
     ],
   },
   {

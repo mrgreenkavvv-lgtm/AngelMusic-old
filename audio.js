@@ -53,6 +53,18 @@ export function playChord(kind, enabled = true) {
   setTimeout(() => notes.forEach(n => playNote(n, true)), notes.length * 260 + 250);
 }
 
+const SCALES = { scaleC: [60, 62, 64, 65, 67, 69, 71, 72], scaleAm: [57, 59, 60, 62, 64, 65, 67, 69] };
+/** Звук для карточек и слуховых заданий: аккорд (major/minor) или гамма (scaleC/scaleAm). */
+export function playKind(kind, enabled = true) {
+  if (!enabled) return;
+  if (SCALES[kind]) { SCALES[kind].forEach((n, i) => setTimeout(() => playNote(n, true), i * 300)); return; }
+  playChord(kind, true);
+}
+/** Два звука подряд (для «выше или ниже»). */
+export function playPair(a, b) {
+  playNote(a, true); setTimeout(() => playNote(b, true), 750);
+}
+
 function beep(freqs, enabled, type = 'triangle', step = 0.09) {
   if (!enabled) return;
   try {
