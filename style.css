@@ -1,0 +1,187 @@
+/* ===== Шрифты (локальные, работают без интернета) ===== */
+@font-face{font-family:Nunito;font-weight:700;font-display:swap;src:url(../fonts/nunito-cyrillic-700-normal.woff2) format("woff2");unicode-range:U+0400-04FF}
+@font-face{font-family:Nunito;font-weight:800;font-display:swap;src:url(../fonts/nunito-cyrillic-800-normal.woff2) format("woff2");unicode-range:U+0400-04FF}
+@font-face{font-family:Nunito;font-weight:900;font-display:swap;src:url(../fonts/nunito-cyrillic-900-normal.woff2) format("woff2");unicode-range:U+0400-04FF}
+@font-face{font-family:Nunito;font-weight:700;font-display:swap;src:url(../fonts/nunito-latin-700-normal.woff2) format("woff2");unicode-range:U+0000-03FF,U+2000-206F,U+20AC,U+2122}
+@font-face{font-family:Nunito;font-weight:800;font-display:swap;src:url(../fonts/nunito-latin-800-normal.woff2) format("woff2");unicode-range:U+0000-03FF,U+2000-206F,U+20AC,U+2122}
+@font-face{font-family:Nunito;font-weight:900;font-display:swap;src:url(../fonts/nunito-latin-900-normal.woff2) format("woff2");unicode-range:U+0000-03FF,U+2000-206F,U+20AC,U+2122}
+@font-face{font-family:Music;font-display:block;src:url(../fonts/noto-music-music-400-normal.woff2) format("woff2")}
+
+/* ===== Дизайн-токены (вариант A — яркий игровой) ===== */
+:root{
+  --bg:#FFF4E0; --card:#FFFFFF; --ink:#2B2350; --sub:#6E6790; --line:#F1E6D4;
+  --accent:#FF7A3D; --soft:#FFE1CC;
+  --orange:#FF8A4C; --blue:#4DA8FF; --green:#3CC48B; --pink:#FF6FA8; --yellow:#FFC93D; --violet:#9B7BFF;
+  --ok:#3CC48B; --bad:#FF5A5F;
+  --r:22px; --shadow:0 5px 0 rgba(0,0,0,.10); --cardshadow:0 6px 18px rgba(40,40,80,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:Nunito,system-ui,sans-serif;font-weight:700;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input{font:inherit;color:inherit}
+.music{font-family:Music,serif;font-weight:400}
+
+.app{max-width:480px;min-height:100dvh;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+.screen-enter{animation:enter .25s ease-out}
+@keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ===== Шапка ===== */
+.top{display:flex;align-items:center;gap:10px;min-height:40px}
+.top .title{flex:1;text-align:center;font-weight:900;font-size:19px}
+.logo{color:var(--accent);font-size:22px;font-weight:900;flex:1}
+.back{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--card);box-shadow:0 3px 0 rgba(0,0,0,.06)}
+.back svg{width:22px;height:22px}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--soft);padding:6px 12px;border-radius:99px;font-weight:900;font-size:15px;white-space:nowrap}
+.pill svg{width:16px;height:16px}
+
+h1.big{font-size:30px;font-weight:900;line-height:1.15}
+.muted{color:var(--sub)}
+.small{font-size:13px}
+
+/* ===== Карточки ===== */
+.card{background:var(--card);border-radius:18px;padding:12px 14px;box-shadow:0 4px 0 rgba(0,0,0,.05)}
+.lvl{display:flex;gap:12px;align-items:center}
+.badge{width:48px;height:48px;flex:none;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:#fff;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
+.grow{flex:1;min-width:0}
+.pb{height:10px;background:var(--soft);border-radius:99px;overflow:hidden;margin:6px 0 4px}
+.pb i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+.on-color .pb{background:rgba(255,255,255,.35)} .on-color .pb i{background:#fff}
+
+.streak-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.streak-head b{font-size:17px;font-weight:900}
+.streak-head small{margin-left:auto;font-size:12px;color:var(--sub);text-align:right}
+.week{display:flex;justify-content:space-between}
+.day{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:800;color:var(--sub)}
+.day i{width:32px;height:32px;border-radius:50%;background:#F1ECE3;display:flex;align-items:center;justify-content:center;color:#fff}
+.day i svg{width:16px;height:16px}
+.day.on i{background:var(--accent)} .day.today i{box-shadow:0 0 0 3px var(--soft)}
+
+/* ===== Большие цветные кнопки разделов ===== */
+.menu{width:100%;text-align:left;border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:center;color:#fff;box-shadow:var(--shadow);transition:transform .1s}
+.menu:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.10)}
+.menu h2{font-size:20px;font-weight:900}
+.menu p{font-size:13px;opacity:.92}
+.menu .pct{font-size:12px;font-weight:800}
+.menu .chev{font-size:30px;font-weight:900;opacity:.8}
+.ic{width:56px;height:56px;flex:none;border-radius:16px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:34px;line-height:1}
+.ic svg{width:30px;height:30px}
+.bg-orange{background:var(--orange)} .bg-blue{background:var(--blue)} .bg-green{background:var(--green)}
+.bg-pink{background:var(--pink)} .bg-violet{background:var(--violet)} .bg-yellow{background:var(--yellow)}
+
+.teacher-link{margin-top:auto;align-self:center;display:flex;gap:6px;align-items:center;color:var(--sub);font-size:14px;padding:9px 18px;border-radius:99px;border:2px dashed #E2D6C3}
+.teacher-link svg{width:18px;height:18px}
+
+/* ===== Кнопки ===== */
+.btn{height:58px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:18px;padding:0 18px;box-shadow:var(--shadow);transition:transform .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.1)}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.ghost{background:var(--card);border:2px solid var(--soft);box-shadow:none}
+.btn.danger{background:#FFE3E3;color:#C2373C;box-shadow:none}
+.btn:disabled{opacity:.5}
+.row{display:flex;gap:12px} .row>*{flex:1}
+.stack{display:flex;flex-direction:column;gap:12px}
+
+/* ===== Уровни ===== */
+.level{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border-radius:20px;padding:12px 14px;box-shadow:0 4px 0 rgba(0,0,0,.06)}
+.level .num{width:46px;height:46px;flex:none;border-radius:14px;color:#fff;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center}
+.level h3{font-size:17px;font-weight:900}
+.level p{font-size:13px;color:var(--sub)}
+.level.locked{opacity:.5}
+.stars3{display:flex;gap:2px}
+.stars3 svg{width:18px;height:18px}
+
+/* ===== Тест ===== */
+.qtitle{font-size:26px;font-weight:900}
+.staffcard{background:var(--card);border-radius:var(--r);padding:8px;box-shadow:var(--cardshadow);position:relative}
+.staffcard svg{display:block;width:100%;height:auto}
+.listen{position:absolute;right:10px;top:10px;width:42px;height:42px;border-radius:14px;background:var(--soft);display:flex;align-items:center;justify-content:center}
+.listen svg{width:22px;height:22px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{height:72px;border-radius:var(--r);font-size:26px;font-weight:900;color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.12);transition:transform .1s,opacity .2s}
+.opt:active{transform:translateY(3px)}
+.opt.dim{opacity:.35}
+.opt.right{background:var(--ok)!important;animation:pop .35s}
+.opt.wrong{background:var(--bad)!important;animation:shake .35s}
+.opt.long{font-size:17px;line-height:1.15;padding:0 8px}
+@keyframes pop{50%{transform:scale(1.06)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.feedback{text-align:center;font-weight:900;font-size:18px;min-height:26px}
+.feedback.ok{color:var(--ok)} .feedback.bad{color:var(--bad)}
+.hint{text-align:center;color:var(--sub);font-size:14px}
+
+/* ===== Итог ===== */
+.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+.result .bigstars{display:flex;gap:8px}
+.result .bigstars svg{width:64px;height:64px}
+.result .bigstars svg:nth-child(2){transform:translateY(-14px)}
+.result .score{font-size:20px;color:var(--sub)}
+
+/* ===== Теория ===== */
+.tabs{display:flex;background:var(--card);border-radius:16px;padding:4px;gap:4px}
+.tabs button{flex:1;height:42px;border-radius:12px;font-weight:900;color:var(--sub)}
+.tabs button.active{background:var(--accent);color:#fff}
+.flip{flex:1;min-height:360px;perspective:1200px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;min-height:360px;transition:transform .5s;transform-style:preserve-3d}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border-radius:28px;padding:24px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;box-shadow:0 8px 24px rgba(40,40,80,.10)}
+.face.face-back{transform:rotateY(180deg);justify-content:flex-start}
+.sym{width:140px;height:140px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:72px;line-height:1;color:var(--accent);flex:none}
+.sym.sm{width:96px;height:96px;font-size:50px}
+
+.face h2{font-size:26px;font-weight:900}
+.face .expl{font-size:18px;color:var(--sub);line-height:1.45}
+.face .expl b{color:var(--ink)}
+.fact{margin-top:auto;background:var(--soft);padding:12px 16px;border-radius:14px;font-weight:800;font-size:15px}
+.tap{color:var(--sub);font-size:14px}
+.timesig{font-family:Nunito;font-weight:900;display:flex;flex-direction:column;line-height:.85;font-size:48px;color:var(--accent)}
+
+/* ===== Успехи ===== */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:var(--card);border-radius:18px;padding:14px;box-shadow:0 4px 0 rgba(0,0,0,.05)}
+.stat b{font-size:28px;font-weight:900;display:block}
+.stat span{font-size:13px;color:var(--sub)}
+.awards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.award{background:var(--card);border-radius:18px;padding:12px 6px;text-align:center;font-size:12px;box-shadow:0 4px 0 rgba(0,0,0,.05)}
+.award .medal{width:52px;height:52px;margin:0 auto 6px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff}
+.award .medal svg{width:28px;height:28px}
+.award.off{opacity:.4;filter:grayscale(1)}
+h3.sec{font-size:18px;font-weight:900;margin-top:4px}
+
+/* ===== Учитель ===== */
+.pin-dots{display:flex;gap:14px;justify-content:center;margin:10px 0}
+.pin-dots i{width:18px;height:18px;border-radius:50%;background:var(--line)}
+.pin-dots i.on{background:var(--accent)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:300px;margin:0 auto;width:100%}
+.keypad button{height:64px;border-radius:20px;background:var(--card);font-size:26px;font-weight:900;box-shadow:0 4px 0 rgba(0,0,0,.06)}
+.keypad button:active{transform:translateY(2px)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;color:var(--sub)}
+.field input{height:54px;border-radius:16px;border:2px solid var(--line);background:var(--card);padding:0 16px;font-size:18px;font-weight:800;outline:none}
+.field input:focus{border-color:var(--accent)}
+.toggle{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;padding:12px 14px;width:100%;text-align:left}
+.toggle .sw{margin-left:auto;width:50px;height:30px;border-radius:99px;background:#E2D9CB;position:relative;flex:none;transition:background .2s}
+.toggle .sw::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s}
+.toggle.on .sw{background:var(--green)} .toggle.on .sw::after{left:23px}
+.hard{display:flex;flex-wrap:wrap;gap:8px}
+.hard span{background:#FFE3E3;color:#C2373C;padding:6px 10px;border-radius:12px;font-size:14px}
+
+/* ===== Приветствие ===== */
+.welcome{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;text-align:center}
+.welcome .logo-big{font-size:40px;font-weight:900;color:var(--accent)}
+.welcome .hero{font-size:110px;color:var(--accent);display:flex;justify-content:center}
+
+/* ===== Тост ===== */
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,40px);opacity:0;background:var(--ink);color:#fff;padding:12px 18px;border-radius:16px;font-weight:800;transition:.25s;pointer-events:none;z-index:9;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (min-width:600px){ .app{padding-top:32px} }
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.glyph{display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.sym .glyph{font-size:96px}
+.sym.sm .glyph{font-size:72px}
+.num .glyph{font-size:30px}
+.num .timesig{font-size:20px;color:#fff;line-height:.8}
+.ic .glyph svg{width:auto;height:auto}
